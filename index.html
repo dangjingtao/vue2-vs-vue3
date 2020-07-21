@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style type="text/css">
+    ul {
+      display: flex;
+      /* border-bottom: 1px solid #ccc; */
+
+    }
+
+    li {
+      list-style: none;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+
+
+  <script src="vue2.js"></script>
+  <script src="lodash.js"></script>
+
+  <script>
+
+    const template =
+      `<div>
+        <h1>item length: {{datas.length}}</h1>
+        <p><b>{{action}}</b> tooks {{time}} ms</p><br>
+        <button @click="shuffle">shuffle</button>
+        <ul v-for="item in datas" :key="item.index">
+          <li>{{item.name}}-{{item.index}}</li>
+          <li>Lorem ipsum dolor sit amet</li>
+          <li>Lorem ipsum dolor sit amet</li>
+          <li>Lorem ipsum dolor sit amet</li>
+        </ul>
+      </div>`;
+
+    // 数据生成器
+    const getData = (n) => {
+      let ret = [];
+      for (let i = 0; i < n; i++) {
+        ret.push({ name: 'djtao', index: i })
+      }
+      return ret;
+    }
+    const datas = getData(50000);
+
+    let s = window.performance.now();
+
+    // vue 2
+    const vm = new Vue({
+      el: '#app',
+      template,
+      data: {
+        action: 'render',
+        time: 0,
+        datas,
+      },
+      mounted() {
+        this.time = window.performance.now() - s;
+      },
+      methods: {
+        shuffle() {
+          this.action = 'shuffle';
+          this.datas = _.shuffle(this.datas);
+          let s = window.performance.now();
+          this.$nextTick(() => {
+            this.time = window.performance.now() - s;
+          })
+        }
+      }
+    })
+
+    // vue 3
+
+    // Vue.createApp({
+    //   template,
+    //   data() {
+    //     return {
+    //       action: 'render',
+    //       time: 0,
+    //       datas
+    //     }
+    //   },
+    //   mounted() {
+    //     this.time = window.performance.now() - s;
+    //   },
+    //   methods: {
+    //     shuffle() {
+    //       this.action = 'shuffle';
+    //       this.datas = _.shuffle(this.datas);
+    //       let s = window.performance.now();
+    //       this.$nextTick(() => {
+    //         this.time = window.performance.now() - s;
+    //       })
+    //     }
+    //   }
+    // }).mount('#app');
+  </script>
+</body>
+
+</html>
